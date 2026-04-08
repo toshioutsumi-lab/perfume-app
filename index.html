@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+香水診断
+</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+.wrap { max-width: 560px; width: 100%; }
+h1 { font-size: 22px; font-weight: 500; color: #1a1a1a; margin-bottom: 0.25rem; }
+.subtitle { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
+.progress-bar { height: 3px; background: #e5e5e5; border-radius: 2px; margin-bottom:
+.progress-fill { height: 100%; background: #1D9E75; border-radius: 2px; transition:
+.step-counter { font-size: 12px; color: #aaa; margin-bottom: 1rem; }
+.step { display: none; }
+.step.active { display: block; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1
+.q-label { font-size: 16px; font-weight: 500; color: #1a1a1a; margin-bottom: 1rem; d
+.options { display: flex; flex-direction: column; gap: 8px; }
+.opt-btn { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding
+.opt-btn:hover { background: #f5f5f3; border-color: #ccc; }
+.opt-btn.selected { border: 2px solid #1D9E75; background: #E1F5EE; color: #085041;
+.opt-dot { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #ccc;
+.opt-btn.selected .opt-dot { background: #1D9E75; border-color: #1D9E75; }
+.opt-dot-inner { width: 6px; height: 6px; border-radius: 50%; background: #fff; opac
+.opt-btn.selected .opt-dot-inner { opacity: 1; }
+.result-card { background: #fff; border: 1px solid #eee; border-radius: 14px; paddin
+.result-rank { font-size: 12px; color: #aaa; margin-bottom: 4px; }
+.result-name { font-size: 20px; font-weight: 500; color: #1a1a1a; margin-bottom: 4px
+.result-brand { font-size: 13px; color: #888; margin-bottom: 10px; }
+.result-image { font-size: 14px; color: #0F6E56; font-weight: 500; margin-bottom: 8p
+.match-bar-label { font-size: 12px; color: #aaa; margin-bottom: 4px; }
+.match-bar-bg { height: 4px; background: #eee; border-radius: 2px; }
+.match-bar-fill { height: 100%; border-radius: 2px; background: #1D9E75; }
+.data-note { font-size: 11px; color: #bbb; margin-top: 4px; }
+.result-desc { font-size: 13px; color: #666; line-height: 1.6; margin-top: 10px; }
+.tag { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 6px;
+.tag-male { background: #E6F1FB; color: #0C447C; }
+.tag-female { background: #FBEAF0; color: #72243E; }
+.tag-unisex { background: #E1F5EE; color: #085041; }
+.retry-btn { margin-top: 0.5rem; padding: 10px 24px; border-radius: 10px; border: 1p
+.retry-btn:hover { background: #eee; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>
+香水タイプ診断
+</h1>
+<p class="subtitle">5
+つの質問であなたに合う香水をご提案します
+</p>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></
+<div class="step-counter" id="counter">
+質問
+ 1 / 5</div>
+<div id="step-0" class="step active">
+<span class="q-label">
+香りをつけるのはどんなシーンが多いですか？
+</span>
+<div class="options">
+<button class="opt-btn" data-q="0" data-v="0"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="0" data-v="1"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="0" data-v="2"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="0" data-v="3"><span class="opt-dot"><span clas
+</div>
+</div>
+<div id="step-1" class="step">
+<span class="q-label">
+香りの強さはどう好みますか？
+</span>
+<div class="options">
+<button class="opt-btn" data-q="1" data-v="1"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="1" data-v="2"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="1" data-v="4"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="1" data-v="5"><span class="opt-dot"><span clas
+</div>
+</div>
+<div id="step-2" class="step">
+<span class="q-label">
+甘い香りは好きですか？
+</span>
+<div class="options">
+<button class="opt-btn" data-q="2" data-v="1"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="2" data-v="3"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="2" data-v="5"><span class="opt-dot"><span clas
+</div>
+</div>
+<div id="step-3" class="step">
+<span class="q-label">
+どんな雰囲気の香りが好きですか？
+</span>
+<div class="options">
+<button class="opt-btn" data-q="3" data-v="1"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="3" data-v="3"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="3" data-v="5"><span class="opt-dot"><span clas
+</div>
+</div>
+<div id="step-4" class="step">
+<span class="q-label">
+大人っぽさと若々しさ、どちらを求めますか？
+</span>
+<div class="options">
+<button class="opt-btn" data-q="4" data-v="1"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="4" data-v="3"><span class="opt-dot"><span clas
+<button class="opt-btn" data-q="4" data-v="5"><span class="opt-dot"><span clas
+</div>
+</div>
+<div id="step-result" class="step">
+<div id="results-area"></div>
+<button class="retry-btn" onclick="restart()">
+もう一度診断する
+</button>
+</div>
+</div>
+<script>
+const perfumes = [
+{
+name: "English Pear & Freesia", brand: "Jo Malone",
+image: "
+清楚なお姉さんの香り
+",
+desc: "
+爽やかな洋梨とフリージアが織りなす万能型。清潔感があり、オフィスでもデートでも使いやすい
+gender: "female", reviewCount: 1797,
+scene: [1.09, 1.46, 3.48, 1.57],
+strength: 1.86, sweetness: 5.0, calmness: 1.0, maturity: 1.36
+},
+{
+name: "Oolang Infini", brand: "Atelier Cologne",
+image: "
+知的でさりげない大人の香り
+",
+desc: "
+烏龍茶とシトラスが溶け合う静かな香り。主張しないが記憶に残る、知性的な個性。
+",
+gender: "unisex", reviewCount: 197,
+scene: [1.51, 1.0, 2.95, 1.81],
+strength: 5.0, sweetness: 1.5, calmness: 2.48, maturity: 1.46
+},
+{
+name: "Poème de Sagano", brand: "Ella K",
+image: "
+和の美意識を纏う香り
+",
+desc: "
+柚子と竹の静謐な和の香り。日本人の感性に深く刺さる、癒し系の一本。
+",
+gender: "unisex", reviewCount: 335,
+scene: [1.0, 1.09, 2.37, 1.0],
+strength: 1.93, sweetness: 2.84, calmness: 5.0, maturity: 1.0
+},
+{
+name: "Bvlgari Pour Homme", brand: "BVLGARI",
+image: "
+静かな自信を持つビジネスマンの香り
+",
+desc: "
+ダージリンとムスクの落ち着いた香り。万人受けする定番中の定番。
+",
+gender: "male", reviewCount: 225,
+scene: [2.29, 1.66, 5.0, 5.0],
+strength: 1.0, sweetness: 1.0, calmness: 2.51, maturity: 3.46
+},
+{
+name: "Aventus", brand: "Creed",
+image: "
+成功者の余裕とセクシーさ
+",
+desc: "
+パイナップルから重厚なオークモスへ。英国紳士的な威厳と色気を纏う、存在感の塊。
+",
+gender: "male", reviewCount: 452,
+scene: [5.0, 5.0, 1.0, 4.98],
+strength: 2.89, sweetness: 3.6, calmness: 1.97, maturity: 5.0
+}
+];
+let answers = {};
+let currentStep = 0;
+const totalSteps = 5;
+function updateProgress() {
+const pct = currentStep >= totalSteps ? 100 : Math.round(currentStep / totalSteps 
+document.getElementById("prog").style.width = pct + "%";
+document.getElementById("counter").textContent = currentStep >= totalSteps ? "
+診断結
+}
+function showStep(n) {
+document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+document.getElementById(n >= totalSteps ? "step-result" : "step-" + n).classList.a
+currentStep = n;
+updateProgress();
+}
+function calcScore(p) {
+let score = 0;
+if (answers[0] !== undefined) score += p.scene[answers[0]] * 2;
+if (answers[1] !== undefined) score += (5- Math.abs(p.strength- answers[1])) * 1
+if (answers[2] !== undefined) score += (5- Math.abs(p.sweetness- answers[2])) *
+if (answers[3] !== undefined) score += (5- Math.abs(p.calmness- answers[3])) * 1
+if (answers[4] !== undefined) score += (5- Math.abs(p.maturity- answers[4])) * 1
+return score;
+}
+function showResult() {
+const scored = perfumes.map(p => ({ ...p, score: calcScore(p) })).sort((a,b) => b.
+const maxScore = scored[0].score;
+const area = document.getElementById("results-area");
+area.innerHTML = "";
+scored.slice(0,3).forEach((p, i) => {
+const pct = maxScore > 0 ? Math.round(p.score / maxScore * 100) : 0;
+const gc = p.gender === "male" ? "tag-male" : p.gender === "female" ? "tag-femal
+const gl = p.gender === "male" ? "
+メンズ寄り
+" : p.gender === "female" ? "
+レディース寄
+const card = document.createElement("div");
+card.className = "result-card";
+GitHub Pages 
+公開⼿順（⽇本語で案内すること）
+1. GitHub
+にサインインした状態で右上の「+
+」をクリック
+ →
+「
+New repository
+」
+2. Repository name 
+に好きな名前を⼊⼒（例：
+perfume-app
+）
+    card.innerHTML =
+'<div class="result-rank">' + (i === 0 ? "
+あなたに最も合う香水
+" : "
+第
+" + (i+1) + "
+'<div class="result-name">' + p.name + '</div>' +
+'<div class="result-brand">' + p.brand + '</div>' +
+'<div class="result-image">' + p.image + '</div>' +
+'<div class="match-bar-label">
+マッチ度
+ ' + pct + '%</div>' +
+'<div class="match-bar-bg"><div class="match-bar-fill" style="width:' + pct +
+'<div class="data-note">
+データ分析による推薦
+</div>' +
+'<div class="result-desc">' + p.desc + '</div>' +
+'<span class="tag ' + gc + '">' + gl + '</span>';
+    area.appendChild(card);
+});
+showStep(totalSteps);
+}
+document.querySelectorAll(".opt-btn").forEach(btn => {
+  btn.addEventListener("click", function() {
+const q = parseInt(this.dataset.q);
+const v = parseFloat(this.dataset.v);
+document.querySelectorAll('.opt-btn[data-q="' + q + '"]').forEach(b => b.classLi
+this.classList.add("selected");
+    answers[q] = v;
+setTimeout(function() {
+if (currentStep < totalSteps -1) showStep(currentStep + 1);
+else showResult();
+}, 280);
+});
+});
+function restart() {
+  answers = {};
+document.querySelectorAll(".opt-btn").forEach(b => b.classList.remove("selected"))
+showStep(0);
+}
+updateProgress();
+</script>
+</body>
+</html>
